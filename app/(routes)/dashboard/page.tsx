@@ -5,7 +5,7 @@ import { app } from "@/lib/firebase/config";
 import { getFirestore } from "firebase/firestore";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 
 export default function DashboardPage() {
@@ -37,9 +37,6 @@ export default function DashboardPage() {
         return <h2>Loading</h2>
     }
 
-    return (
-        <>
-            <div>dasboard page</div>
-        </>
-    )
+    return redirect('/dashboard/meeting-type')
+
 }
