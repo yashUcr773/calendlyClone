@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { FaFacebook, FaGoogle, FaMicrosoft } from "react-icons/fa";
+import { FaGoogle, FaMicrosoft } from "react-icons/fa";
 
 export default function Hero() {
     return (
