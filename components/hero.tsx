@@ -1,8 +1,20 @@
+"use client"
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { FaGoogle, FaMicrosoft } from "react-icons/fa";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { useRouter } from "next/navigation";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
-export default function Hero() {
+export default async function Hero() {
+
+    const { isAuthenticated } = useKindeBrowserClient()
+    const router = useRouter()
+
+    if (isAuthenticated) {
+        router.replace('/dashboard')
+    }
+
     return (
         <div className="flex flex-col justify-center items-center my-32 p-4">
             <div className="text-center mx-auto md:max-w-2xl lg:max-w-3xl">

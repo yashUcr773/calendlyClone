@@ -17,7 +17,7 @@ const DashboardHeader = () => {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <div className='flex flex-row gap-1 items-center justify-center cursor-pointer'>
-                        <Image width={40} height={40} src={user?.picture!} alt='Avatar' className='rounded-full'></Image>
+                        <Image width={40} height={40} src={user?.picture || '/placeholder.jpg'} alt='Avatar' className='rounded-full'></Image>
                         <ChevronDown></ChevronDown>
                     </div>
                 </DropdownMenuTrigger>

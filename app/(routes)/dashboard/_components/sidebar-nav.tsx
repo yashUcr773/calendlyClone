@@ -4,12 +4,13 @@ import { cn } from '@/lib/utils'
 import { Briefcase, Calendar, Clock, Plus, Settings } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 export const SidebarNav = () => {
 
     const path = usePathname()
+    const router = useRouter()
     const [activePath, setActivePath] = useState(path)
 
     useEffect(() => {
@@ -50,7 +51,7 @@ export const SidebarNav = () => {
                 <Image src={'/logo.svg'} width={100} height={100} alt='logo'></Image>
             </div>
             <div>
-                <Button className='flex flex-row gap-2 rounded-full mt-6 items-center justify-center w-full'>
+                <Button onClick={() => { router.push('/create-meeting') }} className='flex flex-row gap-2 rounded-full mt-6 items-center justify-center w-full'>
                     <Plus></Plus>
                     Create
                 </Button>
