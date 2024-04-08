@@ -5,3 +5,12 @@ export interface MeetingFormData {
     eventName: string
     duration: number
 }
+
+export interface MeetingEventItemType {
+    location: string
+    locationURL: string
+    themeColor: string
+    eventName: string
+    duration: number
+    createdBy: string
+}

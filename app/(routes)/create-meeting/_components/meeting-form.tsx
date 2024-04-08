@@ -54,10 +54,10 @@ const MeetingForm = ({ setFormValue }: MeetingFormProps) => {
 
             console.log(response)
             router.push('/dashboard/meeting-type')
-            toast('New meeting created!!!')
+            toast.success('New meeting created!!!')
         } catch (e) {
             console.log(e)
-            toast('Some error occured!!!')
+            toast.error('Some error occured!!!')
         }
 
     }

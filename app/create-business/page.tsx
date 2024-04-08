@@ -26,7 +26,7 @@ const CreateBusinessPage = () => {
         })
         console.log(response)
         setBusiness("")
-        toast('New business created!!!')
+        toast.success('New business created!!!')
         router.replace('/dashboard')
     }
 
