@@ -13,4 +13,5 @@ export interface MeetingEventItemType {
     eventName: string
     duration: number
     createdBy: string
+    id:string
 }

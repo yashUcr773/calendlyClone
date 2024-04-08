@@ -6,6 +6,8 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore'
 
 import MeetingEventItem from './meeting-event-item'
+
+
 const MeetingEventList = () => {
 
     const { isLoading, user } = useKindeBrowserClient()
@@ -33,10 +35,15 @@ const MeetingEventList = () => {
         return <div>Loading</div>
     }
 
+    const onEventDelete = () => {
+        getUserEvents()
+
+    }
+
     return (
         <div className='mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {eventlist.map(event => (
-                <MeetingEventItem event={event}></MeetingEventItem>
+                <MeetingEventItem event={event} onEventDelete={onEventDelete}></MeetingEventItem>
             ))}
         </div>
     )

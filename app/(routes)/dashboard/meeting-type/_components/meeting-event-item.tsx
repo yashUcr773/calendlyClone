@@ -1,24 +1,56 @@
 import { MeetingEventItemType } from '@/types'
 import React from 'react'
-import { Clock, Copy, MapPin, Settings } from 'lucide-react'
+import { Clock, Copy, MapPin, Pen, Settings, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { deleteDoc, doc, getFirestore } from 'firebase/firestore'
+import { app } from '@/lib/firebase/config'
+
 
 interface MeetingEventItemProps {
     event: MeetingEventItemType
+    onEventDelete: () => void
 }
 
-const MeetingEventItem = ({ event }: MeetingEventItemProps) => {
+const MeetingEventItem = ({ event, onEventDelete }: MeetingEventItemProps) => {
+
+
+    const db = getFirestore(app)
 
     const copyLink = () => {
         navigator.clipboard.writeText(event.locationURL)
         toast.success('Copied')
     }
 
+    const deleteEvent = async () => {
+        try {
+            const response = await deleteDoc(doc(db, 'MeetingEvent', event.id))
+            toast.success('Meeting deleted!!!')
+            onEventDelete()
+        } catch (e) {
+            console.log(e)
+            toast.error('Some Error Occured!!!')
+        }
+    }
+
     return (
         <div className='shadow-md border-t-8 rounded-lg p-4 flex flex-col gap-4' style={{ borderColor: event?.themeColor }}>
             <div className='flex flex-row justify-end'>
-                <Settings className='cursor-pointer'></Settings>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Settings className='cursor-pointer'></Settings>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className='p-2'>
+                        <DropdownMenuItem className='flex gap-4'><Pen size={20}></Pen>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { deleteEvent() }} className='flex gap-4'><Trash2 size={20}></Trash2> Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             <h2 className='font-medium text-xl'>{event.eventName}</h2>
