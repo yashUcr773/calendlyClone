@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { Input } from '@/components/ui/input'
-import { doc, getFirestore, setDoc } from 'firebase/firestore'
+import { collection, doc, getDocs, getFirestore, query, setDoc, where } from 'firebase/firestore'
 import { app } from '@/lib/firebase/config'
 import { toast } from 'sonner'
 
@@ -27,10 +27,12 @@ const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSe
     const [timeSlot, setTimeSlot] = useState("")
     const [enableSlots, setEnableSlots] = useState(false)
     const [page, setPage] = useState(1)
+    const [prevBookings, setPrevBookings] = useState<any[]>([])
 
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [notes, setNotes] = useState("")
+
 
 
     const db = getFirestore(app)
@@ -40,12 +42,7 @@ const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSe
     }, [eventInfo])
 
     useEffect(() => {
-        const day = format(date!, 'EEEE')
-        if (businessInfo?.daysAvailable?.[day]) {
-            setEnableSlots(true)
-        } else {
-            setEnableSlots(false)
-        }
+        date && handleDateSelect(date)
     }, [businessInfo])
 
     const createTimeSlot = (interval: number) => {
@@ -64,10 +61,13 @@ const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSe
         setTimeSlots(slots);
     }
 
-    const handleDateSelect = (date: Date) => {
+    const handleDateSelect = async (date: Date) => {
         setDate(date)
+
+
         const day = format(date, 'EEEE')
         if (businessInfo?.daysAvailable?.[day]) {
+            await getPrevBookings(date)
             setEnableSlots(true)
         } else {
             setEnableSlots(false)
@@ -111,6 +111,18 @@ const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSe
 
     }
 
+    const getPrevBookings = async (date: Date) => {
+        setPrevBookings([])
+        const q = query(collection(db, 'ScheduleMeetings'), where('selectedDate', '==', date), where('eventId', '==', eventInfo.id))
+        const querySnap = await getDocs(q)
+
+        querySnap.forEach(snap => { setPrevBookings((prev: any) => [...prev, snap.data()]) })
+    }
+
+    const checkTimeSlot = (time: string) => {
+        return (prevBookings.filter(prevBooking => prevBooking.selectedTime === time)).length > 0
+    }
+
     // TODO: Copied from preview meeting. Make it a common component.
     // TODO: Make responsive
     return (
@@ -149,7 +161,7 @@ const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSe
                                 <div className='flex flex-col w-full gap-4 p-4'>
                                     {timeSlots.map((slot, index) => (
                                         <Button
-                                            disabled={!enableSlots}
+                                            disabled={!enableSlots || checkTimeSlot(slot)}
                                             onClick={() => { setSelectedTime(slot) }} key={index} className={cn('border-primary text-primary hover:text-white hover:bg-primary', timeSlot === slot && 'text-white bg-primary')} variant={'outline'}>{slot}</Button>
                                     ))}
                                 </div>
