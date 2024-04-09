@@ -12,6 +12,10 @@ import { Input } from '@/components/ui/input'
 import { collection, doc, getDocs, getFirestore, query, setDoc, where } from 'firebase/firestore'
 import { app } from '@/lib/firebase/config'
 import { toast } from 'sonner'
+import Plunk from '@plunk/node';
+import { render } from '@react-email/render';
+import { Email } from '@/emails/index'
+import { useRouter } from 'next/navigation'
 
 interface MeetingTimeDateSelectionProps {
     eventInfo: MeetingEventItemType
@@ -20,6 +24,7 @@ interface MeetingTimeDateSelectionProps {
 
 // TODO Seperate the components
 // TODO Add react hook forms and zod
+// TODO Update Emails.
 const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSelectionProps) => {
 
     const [date, setDate] = React.useState<Date | undefined>(new Date())
@@ -33,8 +38,8 @@ const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSe
     const [email, setEmail] = useState("")
     const [notes, setNotes] = useState("")
 
-
-
+    const router = useRouter()
+    const plunk = new Plunk(process.env.NEXT_PUBLIC_PLUNK_API_KEY!);
     const db = getFirestore(app)
 
     useEffect(() => {
@@ -101,6 +106,37 @@ const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSe
                 notes,
             })
 
+            const emailHtmlSender = render(
+                <Email
+                    businessName={businessInfo.businessName}
+                    date={date!}
+                    duration={eventInfo.duration}
+                    meetingTime={timeSlot}
+                    meetingUrl={eventInfo.locationURL}
+                    userFirstName={username} />);
+
+            plunk.emails.send({
+                to: email,
+                subject: "Meeting Scheduled!!!",
+                body: emailHtmlSender,
+            });
+
+            const emailHtmlReciever = render(
+                <Email
+                    businessName={businessInfo.businessName}
+                    date={date!}
+                    duration={eventInfo.duration}
+                    meetingTime={timeSlot}
+                    meetingUrl={eventInfo.locationURL}
+                    userFirstName={businessInfo.userName} />);
+
+            plunk.emails.send({
+                to: businessInfo.email,
+                subject: "Meeting Scheduled!!!",
+                body: emailHtmlReciever,
+            });
+
+            router.push('/confirmation')
             toast.success('Meeting Scheduled!')
         } catch (e) {
             console.log(e)
