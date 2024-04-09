@@ -13,5 +13,16 @@ export interface MeetingEventItemType {
     eventName: string
     duration: number
     createdBy: string
-    id:string
+    id: string
+}
+
+export interface BusinessInfo {
+    userName: string;
+    daysAvailable: {
+        [day: string]: boolean;
+    };
+    email: string;
+    businessName: string;
+    startTime: string;
+    endTime: string;
 }

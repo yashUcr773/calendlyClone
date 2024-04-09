@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react'
 import { app } from '@/lib/firebase/config'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
-import { collection, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore'
 
 import MeetingEventItem from './meeting-event-item'
+import { BusinessInfo, MeetingEventItemType } from '@/types'
 
 
 const MeetingEventList = () => {
@@ -13,7 +14,8 @@ const MeetingEventList = () => {
     const { isLoading, user } = useKindeBrowserClient()
     const db = getFirestore(app)
 
-    const [eventlist, setEventlist] = useState<any[]>([])
+    const [eventlist, setEventlist] = useState<MeetingEventItemType[]>([])
+    const [businessInfo, setBusinessInfo] = useState<BusinessInfo>()
 
     const getUserEvents = async () => {
 
@@ -27,8 +29,16 @@ const MeetingEventList = () => {
 
     }
 
+    const getBusiness = async () => {
+        if (!user?.email) return
+        const docRef = doc(db, 'Business', user?.email!)
+        const response = await getDoc(docRef)
+        setBusinessInfo(response.data() as BusinessInfo)
+    }
+
     useEffect(() => {
         getUserEvents()
+        getBusiness()
     }, [isLoading])
 
     if (isLoading) {
@@ -43,7 +53,7 @@ const MeetingEventList = () => {
     return (
         <div className='mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {eventlist.map(event => (
-                <MeetingEventItem event={event} onEventDelete={onEventDelete}></MeetingEventItem>
+                <MeetingEventItem businessInfo={businessInfo!} key={event.id} event={event} onEventDelete={onEventDelete}></MeetingEventItem>
             ))}
         </div>
     )

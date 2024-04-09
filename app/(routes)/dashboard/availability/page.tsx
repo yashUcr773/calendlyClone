@@ -81,7 +81,9 @@ const AvailabilityPage = () => {
                     </div>
                 </div>
             </div>
-            <Button onClick={() => { handleSave() }}>Save</Button>
+            <div className='w-full flex flex-row items-center justify-center'>
+                <Button onClick={() => { handleSave() }} className='px-6 py-4'>Save</Button>
+            </div>
 
         </div>
     )

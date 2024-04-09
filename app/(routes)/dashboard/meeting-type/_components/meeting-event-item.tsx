@@ -1,4 +1,6 @@
-import { MeetingEventItemType } from '@/types'
+"use client"
+
+import { BusinessInfo, MeetingEventItemType } from '@/types'
 import React from 'react'
 import { Clock, Copy, MapPin, Pen, Settings, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -11,20 +13,24 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { deleteDoc, doc, getFirestore } from 'firebase/firestore'
 import { app } from '@/lib/firebase/config'
+import { useOrigin } from '@/hooks/use-origin'
 
 
 interface MeetingEventItemProps {
     event: MeetingEventItemType
     onEventDelete: () => void
+    businessInfo: BusinessInfo
 }
 
-const MeetingEventItem = ({ event, onEventDelete }: MeetingEventItemProps) => {
+const MeetingEventItem = ({ businessInfo, event, onEventDelete }: MeetingEventItemProps) => {
 
 
     const db = getFirestore(app)
+    const origin = useOrigin();
 
     const copyLink = () => {
-        navigator.clipboard.writeText(event.locationURL)
+        const url = `${origin}/${businessInfo.businessName}/${event.id}`
+        navigator.clipboard.writeText(url)
         toast.success('Copied')
     }
 

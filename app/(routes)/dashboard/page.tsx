@@ -7,34 +7,30 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 
-
+// TODO: make sure user should not be able to access this without business
 export default function DashboardPage() {
 
     const db = getFirestore(app);
-    const { user } = useKindeBrowserClient()
+    const { isLoading, user } = useKindeBrowserClient()
     const router = useRouter()
-    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         user && isBusinessRegistered()
-    }, [user])
+    }, [isLoading])
 
     const isBusinessRegistered = async () => {
-
-        setLoading(true)
         const docSnap = await getDoc(doc(db, 'Business', user?.email!));
-        setLoading(false)
         if (docSnap.exists()) {
             console.log('Document data', docSnap.data())
         } else {
             console.log('No document')
-            return router.replace('/create-business')
+            return router.push('/create-business')
         }
 
     }
 
-    if (loading) {
-        return <h2>Loading</h2>
+    if (isLoading) {
+        return <h2>Loading..</h2>
     }
 
     return redirect('/dashboard/meeting-type')
