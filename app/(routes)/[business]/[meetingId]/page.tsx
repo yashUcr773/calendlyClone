@@ -17,7 +17,7 @@ const MeetingIdPage = ({ params }: MeetingIdPageProps) => {
     const db = getFirestore(app)
     const [businessInfo, setBusinessInfo] = useState<BusinessInfo>()
     const [eventInfo, setEventInfo] = useState<MeetingEventItemType>()
-    const [loader, setLoader] = useState(false)
+    const [loader, setLoader] = useState(true)
 
     const getData = async () => {
         setLoader(true)
@@ -35,6 +35,9 @@ const MeetingIdPage = ({ params }: MeetingIdPageProps) => {
     }, [params])
 
 
+    if(loader) {
+        return <div>Loading</div>
+    }
 
 
     return (
