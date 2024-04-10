@@ -100,6 +100,8 @@ const MeetingTimeDateSelection = ({ eventInfo, businessInfo }: MeetingTimeDateSe
                 duration: eventInfo.duration,
                 locationUrl: eventInfo.locationURL,
                 eventId: eventInfo.id,
+                formatedDate: format(date, 'PPP'),
+                formatedTimeStamp: format(date, 't'),
                 id: uuid,
                 username,
                 email,
